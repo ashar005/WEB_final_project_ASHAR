@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Birthday Greeting App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 60px;
+            background-color: #123450;
+        }
+        .box {
+            background: rgb(86, 115, 177);
+            padding: 150px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        input {
+            padding: 10px;
+            font-size: 20px;
+            margin: 8px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            width: 300px;
+        }
+        button {
+            padding: 7px 10px;
+            font-size: 16px;
+            margin: 5px;
+            background-color: #3399ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3e8cd9;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 17px;
+            color: #f9f9f9;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Birthday Greeting App</h2>
+        <p>Enter your name and date of birth:</p>
+        <input type="text" id="nameInput" placeholder="Your name">
+        <br>
+        <input type="date" id="dobInput">
+        <br>
+        <button onclick="showDetails()">Show Details</button>
+        <button onclick="clearAll()">Clear</button>
+        <div id="output"></div>
+    </div>
+    <script>
+        function showDetails() {
+            const name = document.getElementById("nameInput").value.trim();
+            const dob = document.getElementById("dobInput").value;
+            const output = document.getElementById("output");
+            if (name === "" || dob === "") {
+                output.innerText = "Please enter both your name and date of birth.";
+                return;
+            }
+            const birthDate = new Date(dob);
+            const today = new Date();
+            // Age calculation
+            let years = today.getFullYear() - birthDate.getFullYear();
+            let months = today.getMonth() - birthDate.getMonth();
+            let days = today.getDate() - birthDate.getDate();
+            if (days < 0) {
+                months--;
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            // Zodiac sign
+            const zodiac = getZodiacSign(birthDate.getDate(), birthDate.getMonth() + 1);
+            // Next birthday countdown
+            const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+            if (nextBirthday < today) {
+                nextBirthday.setFullYear(today.getFullYear() + 1);
+            }
+            const diffTime = nextBirthday - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            // Output
+            output.innerHTML = `
+                Hello, ${name}!<br><br>
+                You are ${years} years, ${months} months, and ${days} days old.<br>
+                Your zodiac sign is <strong>${zodiac}</strong>.<br>
+                Your next birthday is in <strong>${diffDays} day(s)</strong>! 🎉
+            `;
+        }
+        function clearAll() {
+            document.getElementById("nameInput").value = "";
+            document.getElementById("dobInput").value = "";
+            document.getElementById("output").innerText = "";
+        }
+        function getZodiacSign(day, month) {
+            const signs = [
+                { sign: "Capricorn", from: [12, 22], to: [1, 19] },
+                { sign: "Aquarius", from: [1, 20], to: [2, 18] },
+                { sign: "Pisces", from: [2, 19], to: [3, 20] },
+                { sign: "Aries", from: [3, 21], to: [4, 19] },
+                { sign: "Taurus", from: [4, 20], to: [5, 20] },
+                { sign: "Gemini", from: [5, 21], to: [6, 20] },
+                { sign: "Cancer", from: [6, 21], to: [7, 22] },
+                { sign: "Leo", from: [7, 23], to: [8, 22] },
+                { sign: "Virgo", from: [8, 23], to: [9, 22] },
+                { sign: "Libra", from: [9, 23], to: [10, 22] },
+                { sign: "Scorpio", from: [10, 23], to: [11, 21] },
+                { sign: "Sagittarius", from: [11, 22], to: [12, 21] }
+            ];
+            for (let i = 0; i < signs.length; i++) {
+                const s = signs[i];
+                const [fromMonth, fromDay] = s.from;
+                const [toMonth, toDay] = s.to;
+                if (
+                    (month === fromMonth && day >= fromDay) ||
+                    (month === toMonth && day <= toDay)
+                ) {
+                    return s.sign;
+                }
+            }
+            return "Unknown";
+        }
+    </script>
+</body>
+</html>
+ 
